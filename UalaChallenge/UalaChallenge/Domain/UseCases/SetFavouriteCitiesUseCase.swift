@@ -6,7 +6,7 @@
 //
 
 protocol SetFavouriteCitiesUseCaseProtocol {
-    func execute(citiesId: [Int])
+    func execute(citiesId: Set<Int>)
 }
 
 struct SetFavouriteCitiesUseCase: SetFavouriteCitiesUseCaseProtocol {
@@ -16,7 +16,7 @@ struct SetFavouriteCitiesUseCase: SetFavouriteCitiesUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(citiesId: [Int]) {
+    func execute(citiesId: Set<Int>) {
         repository.setFavouriteCities(cities: citiesId)
     }
 }

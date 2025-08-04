@@ -8,7 +8,7 @@
 import Foundation
 
 protocol GetFavouriteCitiesUseCaseProtocol {
-    func execute() -> [Int]
+    func execute() -> Set<Int>
 }
 
 struct GetFavouriteCitiesUseCase: GetFavouriteCitiesUseCaseProtocol {
@@ -18,7 +18,7 @@ struct GetFavouriteCitiesUseCase: GetFavouriteCitiesUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute() -> [Int] {
+    func execute() -> Set<Int> {
         repository.getFavouritesCities()
     }
 }
