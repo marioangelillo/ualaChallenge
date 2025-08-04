@@ -12,12 +12,17 @@ protocol CityLocalDataSourceProtocol {
     func setFavouriteCities(citiesId: Set<Int>)
 }
 
-final class CityLocalDataSource: CityLocalDataSourceProtocol {
+struct CityLocalDataSource: CityLocalDataSourceProtocol {
+    private let FAVORITE_CITIES_KEY = "favorite_cities"
+    
     func getFavouriteCities() -> Set<Int> {
-        return []
+        let favCitiesArray = UserDefaults.standard.array(forKey: FAVORITE_CITIES_KEY) as? [Int] ?? []
+        let favCitiesSet = Set(favCitiesArray)
+        return favCitiesSet
     }
     
     func setFavouriteCities(citiesId: Set<Int>) {
-        print(citiesId)
+        let favCitiesArray = Array(citiesId)
+        UserDefaults.standard.setValue(favCitiesArray, forKey: FAVORITE_CITIES_KEY)
     }
 }
