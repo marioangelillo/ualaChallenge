@@ -11,7 +11,9 @@ import SwiftUI
 struct UalaChallengeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                CitiesListView()
+            }
         }
     }
 }
