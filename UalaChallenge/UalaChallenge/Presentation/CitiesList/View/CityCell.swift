@@ -46,5 +46,5 @@ struct CityCell: View {
 }
 
 #Preview {
-    CityCell(city: .init(id: 1, name: "Tucumán", country: "Argentina", coordinate: .init(lat: 12.0, lon: 124.1)), viewModel: CitiesListViewModel())
+    CityCell(city: .init(id: 1, name: "Tucumán", country: "Argentina", coordinate: .init(lat: 12.0, lon: 124.1)), viewModel: CitiesViewModelFactory.make())
 }

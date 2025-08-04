@@ -19,7 +19,6 @@ struct GetCitiesUseCase: GetCitiesUseCaseProtocol {
     }
 
     func execute() async throws -> [City] {
-        let response = try await repository.fetchCities()
-        return response.map({ $0.toDomain() })
+        try await repository.fetchCities().map({ $0.toDomain() })
     }
 }

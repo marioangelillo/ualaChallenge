@@ -7,18 +7,46 @@
 
 import SwiftUI
 
-final class CitiesListViewModel: ObservableObject {
-    @Published var cities: [City] = [
-        .init(id: 1, name: "Mock 1", country: "Argentina", coordinate: .init(lat: 34.0, lon: 44.1)),
-        .init(id: 2, name: "Mock 2", country: "Argentina", coordinate: .init(lat: 84.63, lon: 28)),
-        .init(id: 3, name: "Mock 3", country: "Argentina", coordinate: .init(lat: 76, lon: 29)),
-        .init(id: 4, name: "Mock 4", country: "Argentina", coordinate: .init(lat: 55, lon: 26))
-    ]
-    
-    @Published var isLoading: Bool = false
+protocol CitiesListViewModelProtocol: ObservableObject {
+    var cities: [City] { get set }
+    var isLoading: Bool { get set }
+    var textInput: String { get set}
+    var favouriteFilterToggle: Bool { get set }
+    var selectedCity: City? { get set }
+    var cityUseCases: CityUseCaseContainerProtocol { get }
+    func fetchCities() async
+    func applyFilters()
+    func toggleFavouritesTapped()
+    func favouriteIconTapped(_ cityId: Int)
+}
+
+final class CitiesListViewModel: CitiesListViewModelProtocol {
+    @Published var cities: [City] = []
+    @Published var favoritesCities: [City] = []
+    @Published var isLoading: Bool = true
     @Published var textInput: String = ""
     @Published var favouriteFilterToggle = false
     @Published var selectedCity: City?
+    
+    let cityUseCases: CityUseCaseContainerProtocol
+    
+    init(cityUseCases: CityUseCaseContainerProtocol) {
+        self.cityUseCases = cityUseCases
+        
+        Task { await fetchCities() }
+    }
+    
+    @MainActor
+    func fetchCities() async {
+        isLoading = true
+        defer { isLoading = false }
+    
+        do {
+            self.cities = try await cityUseCases.getCityUseCase.execute()
+        } catch {
+            print("API error")
+        }
+    }
     
     func applyFilters() {
         print("text changed")
