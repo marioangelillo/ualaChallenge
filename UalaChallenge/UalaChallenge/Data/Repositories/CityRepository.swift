@@ -7,8 +7,8 @@
 
 protocol CityRepositoryProtocol {
     func fetchCities() async throws -> [CityDTO]
-    func getFavouritesCities() -> [Int]
-    func setFavouriteCities(cities: [Int])
+    func getFavouritesCities() -> Set<Int>
+    func setFavouriteCities(cities: Set<Int>)
 }
 
 struct CityRepository: CityRepositoryProtocol {
@@ -24,11 +24,11 @@ struct CityRepository: CityRepositoryProtocol {
         try await remoteDataSource.fetchCities()
     }
     
-    func getFavouritesCities() -> [Int] {
+    func getFavouritesCities() -> Set<Int> {
         localDataSource.getFavouriteCities()
     }
     
-    func setFavouriteCities(cities: [Int]) {
+    func setFavouriteCities(cities: Set<Int>) {
         localDataSource.setFavouriteCities(citiesId: cities)
     }
 }

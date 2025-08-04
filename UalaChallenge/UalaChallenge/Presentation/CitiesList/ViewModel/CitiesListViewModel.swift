@@ -10,6 +10,7 @@ import SwiftUI
 protocol CitiesListViewModelProtocol: ObservableObject {
     var cities: [City] { get set }
     var filteredCities: [City] { get set }
+    var favoriteCityIds: Set<Int> { get set }
     var isLoading: Bool { get set }
     var textInput: String { get set }
     var favouriteFilterToggle: Bool { get set }
@@ -24,7 +25,7 @@ protocol CitiesListViewModelProtocol: ObservableObject {
 final class CitiesListViewModel: CitiesListViewModelProtocol {
     @Published var cities: [City] = []
     @Published var filteredCities: [City] = []
-    @Published var favoritesCities: [Int] = []
+    @Published var favoriteCityIds: Set<Int> = []
     @Published var isLoading: Bool = true
     @Published var textInput: String = ""
     @Published var favouriteFilterToggle = false
@@ -44,7 +45,7 @@ final class CitiesListViewModel: CitiesListViewModelProtocol {
         defer { isLoading = false }
     
         do {
-            favoritesCities = cityUseCases.getFavoriteCitiesUseCase.execute()
+            favoriteCityIds = cityUseCases.getFavoriteCitiesUseCase.execute()
             cities = try await cityUseCases.getCityUseCase.execute()
             filteredCities = cities
             
@@ -79,19 +80,19 @@ final class CitiesListViewModel: CitiesListViewModelProtocol {
     
     func favouriteIconTapped(_ cityId: Int, _ isFavorite: Bool) {
         if isFavorite {
-            favoritesCities.removeAll { $0 == cityId }
+            favoriteCityIds.remove(cityId)
         } else {
-            favoritesCities.insert(cityId, at: 0)
+            favoriteCityIds.insert(cityId)
         }
         
-        cityUseCases.setFavoriteCityUseCase.execute(citiesId: favoritesCities)
+        cityUseCases.setFavoriteCityUseCase.execute(citiesId: favoriteCityIds)
     }
     
     func isFavorite(_ cityId: Int) -> Bool {
-        favoritesCities.contains(cityId)
+        favoriteCityIds.contains(cityId)
     }
     
     private func filterOnlyFavorites() {
-        filteredCities = filteredCities.filter({ favoritesCities.contains($0.id) })
+        filteredCities = filteredCities.filter({ favoriteCityIds.contains($0.id) })
     }
 }

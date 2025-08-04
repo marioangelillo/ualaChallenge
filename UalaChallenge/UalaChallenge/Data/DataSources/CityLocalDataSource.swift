@@ -8,16 +8,16 @@
 import Foundation
 
 protocol CityLocalDataSourceProtocol {
-    func getFavouriteCities() -> [Int]
-    func setFavouriteCities(citiesId: [Int])
+    func getFavouriteCities() -> Set<Int>
+    func setFavouriteCities(citiesId: Set<Int>)
 }
 
 final class CityLocalDataSource: CityLocalDataSourceProtocol {
-    func getFavouriteCities() -> [Int] {
+    func getFavouriteCities() -> Set<Int> {
         return []
     }
     
-    func setFavouriteCities(citiesId: [Int]) {
+    func setFavouriteCities(citiesId: Set<Int>) {
         print(citiesId)
     }
 }
