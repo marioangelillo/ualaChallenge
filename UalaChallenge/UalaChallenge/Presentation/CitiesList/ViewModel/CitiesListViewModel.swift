@@ -70,7 +70,6 @@ final class CitiesListViewModel: CitiesListViewModelProtocol {
     }
     
     func toggleFavouritesTapped() {
-        favouriteFilterToggle.toggle()
         if favouriteFilterToggle {
             filterOnlyFavorites()
         } else {

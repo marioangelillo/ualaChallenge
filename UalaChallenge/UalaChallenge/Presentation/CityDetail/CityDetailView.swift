@@ -9,13 +9,25 @@ import SwiftUI
 
 struct CityDetailView: View {
     let city: City
+    @Binding var showView: Bool
     
     var body: some View {
-        VStack {
-            Text(city.name)
-            Text(city.country)
-            Text("latitude: \(city.coordinate.lat)")
-            Text("longitude: \(city.coordinate.lon)")
+        VStack(spacing: 20) {
+            MapView(selectedCity: .constant(city))
+                .frame(height: 250)
+            
+            Text(city.cityDetailTitle)
+                .font(.title)
+                .bold()
+            
+            Text(city.cityDetailSubtitle)
+                .font(.headline)
+            
+            Button("Volver") {
+                showView = false
+            }
+            
+            Spacer()
         }
     }
 }
