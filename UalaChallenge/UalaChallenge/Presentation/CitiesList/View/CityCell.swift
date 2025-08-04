@@ -41,7 +41,7 @@ struct CityCell: View {
         }
         .padding()
         .sheet(isPresented: $showDetailsSheet) {
-            CityDetailView(city: city)
+            CityDetailView(city: city, showView: $showDetailsSheet)
         }
     }
 }
