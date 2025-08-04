@@ -10,15 +10,16 @@ import SwiftUI
 struct CityCell: View {
     let city: City
     let viewModel: CitiesListViewModel
+    let isFavorite: Bool
     @State var showDetailsSheet = false
     
     var body: some View {
         HStack {
-            Image(systemName: "heart")
+            Image(systemName: isFavorite ? "heart.fill" : "heart")
                 .foregroundStyle(Color.red)
                 .padding(.trailing, 10)
                 .onTapGesture {
-                    viewModel.favouriteIconTapped(city.id)
+                    viewModel.favouriteIconTapped(city.id, isFavorite)
                 }
             
             VStack(alignment: .leading) {
@@ -46,5 +47,5 @@ struct CityCell: View {
 }
 
 #Preview {
-    CityCell(city: .init(id: 1, name: "Tucumán", country: "Argentina", coordinate: .init(lat: 12.0, lon: 124.1)), viewModel: CitiesListViewModel())
+    CityCell(city: .init(id: 1, name: "Tucumán", country: "Argentina", coordinate: .init(lat: 12.0, lon: 124.1)), viewModel: CitiesViewModelFactory.make(), isFavorite: true)
 }

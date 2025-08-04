@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CitiesListView: View {
-    @StateObject var viewModel = CitiesListViewModel()
+    @StateObject var viewModel: CitiesListViewModel
     @State private var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
@@ -28,11 +28,15 @@ struct CitiesListView: View {
     
     private var portraitView: some View {
         VStack {
-            VStack {
-                searchBar
-                favouriteFilterToggle
+            if viewModel.isLoading {
+                ProgressView()
+            } else {
+                VStack {
+                    searchBar
+                    favouriteFilterToggle
+                }
+                citiesList
             }
-            citiesList
         }
         .padding()
     }
@@ -40,31 +44,48 @@ struct CitiesListView: View {
     private var searchBar: some View {
         TextField("Buscar ciudad...", text: $viewModel.textInput)
             .onChange(of: viewModel.textInput) {
-                viewModel.applyFilters()
+                viewModel.filterByTextInput()
             }
             .textFieldStyle(.roundedBorder)
     }
     
     private var citiesList: some View {
         VStack {
-            List(viewModel.cities, id: \.id) { city in
-                if orientation.isLandscape {
-                    CityCell(city: city, viewModel: viewModel)
-                        .onTapGesture {
-                            viewModel.selectedCity = city
-                        }
-                } else {
-                    NavigationLink(destination: MapView(selectedCity: .constant(city))) {
-                        CityCell(city: city, viewModel: viewModel)
-                    }
-                    .listRowInsets(EdgeInsets())
-                }
+            if orientation.isLandscape {
+                landscapeCitiesList
+            } else {
+                portraitCitiesList
             }
-            .listStyle(PlainListStyle())
         }
         .onRotate { newOrientation in
             orientation = newOrientation
         }
+    }
+    
+    private var landscapeCitiesList: some View {
+        List(viewModel.filteredCities, id: \.id) { city in
+            CityCell(city: city,
+                     viewModel: viewModel,
+                     isFavorite: viewModel.isFavorite(city.id)
+            )
+            .onTapGesture {
+                viewModel.selectedCity = city
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+    
+    private var portraitCitiesList: some View {
+        List(viewModel.filteredCities, id: \.id) { city in
+            NavigationLink(destination: MapView(selectedCity: .constant(city))) {
+                CityCell(city: city,
+                         viewModel: viewModel,
+                         isFavorite: viewModel.isFavorite(city.id)
+                )
+            }
+            .listRowInsets(EdgeInsets())
+        }
+        .listStyle(PlainListStyle())
     }
     
     private var favouriteFilterToggle: some View {
@@ -76,5 +97,5 @@ struct CitiesListView: View {
 }
 
 #Preview {
-    CitiesListView()
+    CitiesListView(viewModel: CitiesViewModelFactory.make())
 }

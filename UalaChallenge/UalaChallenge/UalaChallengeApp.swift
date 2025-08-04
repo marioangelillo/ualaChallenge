@@ -12,7 +12,7 @@ struct UalaChallengeApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                CitiesListView()
+                CitiesListView(viewModel: CitiesViewModelFactory.make())
             }
         }
     }

@@ -7,32 +7,91 @@
 
 import SwiftUI
 
-final class CitiesListViewModel: ObservableObject {
-    @Published var cities: [City] = [
-        .init(id: 1, name: "Mock 1", country: "Argentina", coordinate: .init(lat: 34.0, lon: 44.1)),
-        .init(id: 2, name: "Mock 2", country: "Argentina", coordinate: .init(lat: 84.63, lon: 28)),
-        .init(id: 3, name: "Mock 3", country: "Argentina", coordinate: .init(lat: 76, lon: 29)),
-        .init(id: 4, name: "Mock 4", country: "Argentina", coordinate: .init(lat: 55, lon: 26))
-    ]
-    
-    @Published var isLoading: Bool = false
+protocol CitiesListViewModelProtocol: ObservableObject {
+    var cities: [City] { get set }
+    var filteredCities: [City] { get set }
+    var isLoading: Bool { get set }
+    var textInput: String { get set }
+    var favouriteFilterToggle: Bool { get set }
+    var selectedCity: City? { get set }
+    var cityUseCases: CityUseCaseContainerProtocol { get }
+    func fetchCities() async
+    func filterByTextInput()
+    func toggleFavouritesTapped()
+    func favouriteIconTapped(_ cityId: Int, _ isFavorite: Bool)
+}
+
+final class CitiesListViewModel: CitiesListViewModelProtocol {
+    @Published var cities: [City] = []
+    @Published var filteredCities: [City] = []
+    @Published var favoritesCities: [Int] = []
+    @Published var isLoading: Bool = true
     @Published var textInput: String = ""
     @Published var favouriteFilterToggle = false
     @Published var selectedCity: City?
     
-    func applyFilters() {
-        print("text changed")
+    let cityUseCases: CityUseCaseContainerProtocol
+    
+    init(cityUseCases: CityUseCaseContainerProtocol) {
+        self.cityUseCases = cityUseCases
+        
+        Task { await fetchCities() }
+    }
+    
+    @MainActor
+    func fetchCities() async {
+        isLoading = true
+        defer { isLoading = false }
+    
+        do {
+            favoritesCities = cityUseCases.getFavoriteCitiesUseCase.execute()
+            cities = try await cityUseCases.getCityUseCase.execute()
+            filteredCities = cities
+            
+            if favouriteFilterToggle {
+                filterOnlyFavorites()
+            }
+        } catch {
+            print("API error")
+        }
+    }
+    
+    func filterByTextInput() {
+        if textInput.isEmpty {
+            filteredCities = cities
+        } else {
+            filteredCities = cities.filter { $0.cityDetailTitle.lowercased().contains(textInput.lowercased()) }
+        }
+        
+        if favouriteFilterToggle {
+            filterOnlyFavorites()
+        }
     }
     
     func toggleFavouritesTapped() {
         favouriteFilterToggle.toggle()
+        if favouriteFilterToggle {
+            filterOnlyFavorites()
+        } else {
+            filterByTextInput()
+        }
     }
     
-    func favouriteIconTapped(_ cityId: Int) {
-        if cities.contains(where: { $0.id == cityId }) {
-            print("delete from favourites")
+    func favouriteIconTapped(_ cityId: Int, _ isFavorite: Bool) {
+        if isFavorite {
+            favoritesCities.removeAll { $0 == cityId }
         } else {
-            print("add to favourites")
+            favoritesCities.insert(cityId, at: 0)
         }
+        
+        cityUseCases.setFavoriteCityUseCase.execute(citiesId: favoritesCities)
+    }
+    
+    func isFavorite(_ cityId: Int) -> Bool {
+        favoritesCities.contains(cityId)
+    }
+    
+    private func filterOnlyFavorites() {
+        filteredCities = filteredCities.filter({ favoritesCities.contains($0.id) })
     }
 }
