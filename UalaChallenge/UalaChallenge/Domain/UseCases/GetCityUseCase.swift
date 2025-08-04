@@ -19,6 +19,7 @@ struct GetCitiesUseCase: GetCitiesUseCaseProtocol {
     }
 
     func execute() async throws -> [City] {
-        try await repository.fetchCities().map({ $0.toDomain() })
+        let cities = try await repository.fetchCities().map({ $0.toDomain() })
+        return cities.sorted { $0.cityDetailTitle < $1.cityDetailTitle }
     }
 }
