@@ -10,9 +10,9 @@ import SwiftUI
 final class CitiesListViewModel: ObservableObject {
     @Published var cities: [City] = [
         .init(id: 1, name: "Mock 1", country: "Argentina", coordinate: .init(lat: 34.0, lon: 44.1)),
-        .init(id: 2, name: "Mock 2", country: "Argentina", coordinate: .init(lat: 1.0, lon: 1.1)),
-        .init(id: 3, name: "Mock 3", country: "Argentina", coordinate: .init(lat: 1.0, lon: 1.1)),
-        .init(id: 4, name: "Mock 4", country: "Argentina", coordinate: .init(lat: 1.0, lon: 1.1))
+        .init(id: 2, name: "Mock 2", country: "Argentina", coordinate: .init(lat: 84.63, lon: 28)),
+        .init(id: 3, name: "Mock 3", country: "Argentina", coordinate: .init(lat: 76, lon: 29)),
+        .init(id: 4, name: "Mock 4", country: "Argentina", coordinate: .init(lat: 55, lon: 26))
     ]
     
     @Published var isLoading: Bool = false
