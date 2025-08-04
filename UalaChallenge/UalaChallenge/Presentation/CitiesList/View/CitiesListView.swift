@@ -44,7 +44,7 @@ struct CitiesListView: View {
     private var searchBar: some View {
         TextField("Buscar ciudad...", text: $viewModel.textInput)
             .onChange(of: viewModel.textInput) {
-                viewModel.applyFilters()
+                viewModel.filterByTextInput()
             }
             .textFieldStyle(.roundedBorder)
     }
@@ -63,19 +63,25 @@ struct CitiesListView: View {
     }
     
     private var landscapeCitiesList: some View {
-        List(viewModel.cities, id: \.id) { city in
-            CityCell(city: city, viewModel: viewModel)
-                .onTapGesture {
-                    viewModel.selectedCity = city
-                }
+        List(viewModel.filteredCities, id: \.id) { city in
+            CityCell(city: city,
+                     viewModel: viewModel,
+                     isFavorite: viewModel.isFavorite(city.id)
+            )
+            .onTapGesture {
+                viewModel.selectedCity = city
+            }
         }
         .listStyle(PlainListStyle())
     }
     
     private var portraitCitiesList: some View {
-        List(viewModel.cities, id: \.id) { city in
+        List(viewModel.filteredCities, id: \.id) { city in
             NavigationLink(destination: MapView(selectedCity: .constant(city))) {
-                CityCell(city: city, viewModel: viewModel)
+                CityCell(city: city,
+                         viewModel: viewModel,
+                         isFavorite: viewModel.isFavorite(city.id)
+                )
             }
             .listRowInsets(EdgeInsets())
         }
