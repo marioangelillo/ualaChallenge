@@ -43,6 +43,7 @@ struct CitiesListView: View {
     
     private var searchBar: some View {
         TextField("Buscar ciudad...", text: $viewModel.textInput)
+            .accessibilityIdentifier("SearchBar")
             .onChange(of: viewModel.textInput) {
                 viewModel.filterByTextInput()
             }
@@ -82,6 +83,7 @@ struct CitiesListView: View {
                          viewModel: viewModel,
                          isFavorite: viewModel.isFavorite(city.id)
                 )
+                .accessibilityIdentifier("\(city.id)")
             }
             .listRowInsets(EdgeInsets())
         }
@@ -90,6 +92,7 @@ struct CitiesListView: View {
     
     private var favouriteFilterToggle: some View {
         Toggle("Mostrar solo favoritos", isOn: $viewModel.favouriteFilterToggle)
+            .accessibilityIdentifier("FavoritesToggle")
             .onChange(of: viewModel.favouriteFilterToggle) {
                 viewModel.toggleFavouritesTapped()
             }

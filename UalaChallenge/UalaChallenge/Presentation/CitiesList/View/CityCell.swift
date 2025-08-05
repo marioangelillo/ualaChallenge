@@ -32,6 +32,7 @@ struct CityCell: View {
             Spacer()
             
             Image(systemName: "info")
+                .accessibilityIdentifier("InfoButton_\(city.id)")
                 .foregroundStyle(Color.blue)
                 .padding(.horizontal, 10)
                 .bold()
