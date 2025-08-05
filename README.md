@@ -4,7 +4,7 @@ App iOS desarrollada como parte del challenge técnico de Ualá. La aplicación 
 
 ## Tecnologías utilizadas
 
-- **Swift 5.9**
+- **Swift 5**
 - **SwiftUI**
 - **Clean Architecture** (Presentation, Domain, Data)
 - **Async/Await**
